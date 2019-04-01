@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &984973170287217250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 984973170287217248}
+  - component: {fileID: 984973170287217249}
+  m_Layer: 0
+  m_Name: Tablero
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &984973170287217248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984973170287217250}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0022315532, y: -0.015723854, z: 0.00037859473}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &984973170287217249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984973170287217250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38f1428d74182a048bbf2b8c701b804c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ancho: 4
+  largo: 4
+  P_CasillaStandard: {fileID: 6522521396705593678, guid: e3ec36e3fc731164d9fe7e3b3cc8e225,
+    type: 3}
+  fichasPrefabs:
+  - {fileID: 1976934220304431624, guid: 254bf1d5ae0768a408e465f7964ea7ce, type: 3}
+  - {fileID: 3641094884647853398, guid: 98c37c09b9cd6e04fbdd075656c7a24f, type: 3}
+  - {fileID: 8633430276705033114, guid: 32f1e4bab5478a042ab0f35ed5ce0a89, type: 3}
+  - {fileID: 6256340688831196995, guid: 92b02922bab44c5408272086f9b3f624, type: 3}
+  - {fileID: 6088530796221546042, guid: 507ebe7f7896fef4caeb9e4761164cd2, type: 3}
