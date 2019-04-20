@@ -35,6 +35,11 @@ public class CasillaStandard : Casilla
     {
         if(tablero != null)
         {
+            //Animacion
+            Ficha ficha2 = this.GetFicha();
+            AnimationScript animationS = ficha2.gameObject.GetComponent<AnimationScript>();
+            animationS.rotationSpeed = 10f;
+
             tablero.AlSoltarCasilla();
         }
     }

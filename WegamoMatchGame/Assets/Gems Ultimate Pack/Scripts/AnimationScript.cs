@@ -25,16 +25,16 @@ public class AnimationScript : MonoBehaviour {
     public float scaleRate;
     private float scaleTimer;
 
+    private Ficha Ficha;
+    private bool activateAnimationSpeed = false;
+
 	// Use this for initialization
 	void Start () {
-	
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-       
-        
         if(isAnimated)
         {
             if(isRotating)

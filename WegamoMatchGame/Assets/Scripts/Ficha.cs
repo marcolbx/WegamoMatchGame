@@ -7,9 +7,14 @@ public abstract class Ficha : MonoBehaviour
     public enum FichaValor {DIAMANTE,ESTRELLA,ROMBO,CORAZON,ESPIRAL}; //Define los valores posibles que puede tener una ficha
     public GameObject[] gameObjects;  //Se colocan los objetos que pertencen a cada uno. (Esto para el momento de renderizar el tipo de ficha)
     public FichaValor valor;         //El valor de la ficha
-    bool moviendo = false;
-
-    public InterType interpolation = InterType.EaseOut;
+    public bool moviendo = false;          //Condicion que dice si la ficha se esta moviendo.
+    public Tablero tablero; //Momentaneamente
+    
+    /**
+     * interpolation permite el movimiento visual de las fichas.
+     * 
+     */
+    public InterType interpolation = InterType.SmootherStep;
 
     public enum InterType
     {
@@ -46,12 +51,14 @@ public abstract class Ficha : MonoBehaviour
     {
         if(!moviendo)
         {
-            StartCoroutine(RutinaMovimiento(new Vector3(casilla.x,casilla.y,0),tiempoMovimiento));
+            StartCoroutine(RutinaMovimiento(casilla,tiempoMovimiento));
         }
     }
 
-    public IEnumerator RutinaMovimiento(Vector3 destino, float tiempoMovimiento)
+    public IEnumerator RutinaMovimiento(Casilla casilla, float tiempoMovimiento)
     {
+        Vector3 destino = new Vector3(casilla.x, casilla.y, 0);
+        Debug.Log("RutinaMovimiento: Posicion:"+this.transform.position+" Nombre: "+ this.name);
         Vector3 posicionInicial = transform.position;
         bool llegoADestino = false;
         float tiempoTranscurrido = 0f;
@@ -59,17 +66,26 @@ public abstract class Ficha : MonoBehaviour
 
         while(!llegoADestino)
         {
+             Debug.Log("Posicion:"+this.transform.position+" Nombre:"+this.name);
+             Debug.Log("Distancia:"+Vector3.Distance(transform.position, destino));
             if(Vector3.Distance(transform.position, destino)<0.01f)
             {
+                Debug.Log("Entro en el if: Vector3.Distance(transform.position, destino)<0.001f ");
                 llegoADestino = true;
                 transform.position = destino;
+
+                if (tablero != null)
+                {
+                    tablero.ColocarFicha(this, casilla);
+                }
                 //SetCoord((int)destino.x,(int)destino.y);
                 break;
             }
         tiempoTranscurrido += Time.deltaTime;
-
-        float t = Mathf.Clamp(tiempoTranscurrido/tiempoMovimiento, 0f,1f);
-
+        Debug.Log("Tiempo transcurrido:"+tiempoTranscurrido);
+        float t = Mathf.Clamp(tiempoTranscurrido / tiempoMovimiento, 0f,1f);
+            Debug.Log("t: " + t);
+            Debug.Log("interpolation: " + this.interpolation);
         switch (interpolation)
             {
                 case InterType.Linear:

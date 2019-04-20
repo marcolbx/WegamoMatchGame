@@ -12,7 +12,7 @@ public class Tablero : MonoBehaviour
 
     private Casilla casillaSeleccionada;
     private Casilla casillaSeleccionada2;
-    public float tiempoCambio = 5f;
+    public float tiempoCambio = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -33,13 +33,13 @@ public class Tablero : MonoBehaviour
 
     public Tablero(int ancho, int largo, GameObject P_CasillaStandard)
     {
-        Debug.Log("Entre en el constructor con parametros");
-        Debug.Log("ancho:" + ancho + " largo: " + largo);
+       // Debug.Log("Entre en el constructor con parametros");
+       // Debug.Log("ancho:" + ancho + " largo: " + largo);
         this.ancho = ancho;
         this.largo = largo;
         this.casillas = new Casilla[ancho, largo];
         this.P_CasillaStandard = P_CasillaStandard;
-        Debug.Log("Entrando a creacionCasillas()");
+       // Debug.Log("Entrando a creacionCasillas()");
         CreacionCasillas();
     }
 
@@ -105,7 +105,7 @@ public class Tablero : MonoBehaviour
 
     void ArreglarCamera()
     {
-        Debug.Log("Entro en ArreglarCamera");
+       // Debug.Log("Entro en ArreglarCamera");
         Camera.main.transform.position = new Vector3((float)(ancho - 1) / 2f, (float)(largo - 1) / 2f, -10f);
         float aspectRatio = (float)Screen.width / (float)Screen.height;
         float verticalSize = (float)largo *1.5f / 2f + (float)tamanoBorde; //Tuve que multiplicarlo por 1.5f para arreglar el borde vertical
@@ -115,14 +115,14 @@ public class Tablero : MonoBehaviour
 
     GameObject ObtenerFichaRandom()
     {
-    Debug.Log("Entro en ObtenerFichaRandom");
+   // Debug.Log("Entro en ObtenerFichaRandom");
     int randomIndex = Random.Range(0, fichasPrefabs.Length);
     if (fichasPrefabs[randomIndex] == null)
         Debug.LogWarning("Tablero [" + randomIndex + "] no tiene una ficha");
     return fichasPrefabs[randomIndex];
     }
 
-    void ColocarFicha(Ficha ficha, Casilla casilla)
+    public void ColocarFicha(Ficha ficha, Casilla casilla)
     {
     if (ficha == null)
     {
@@ -135,7 +135,8 @@ public class Tablero : MonoBehaviour
     ficha.transform.rotation = target; 
     casilla.SetFicha(ficha);
     Debug.Log(casilla.name + "Tiene la ficha: " + casilla.GetFicha().name);
-    //ficha.SetCoord(x, y);
+        //ficha.SetCoord(x, y);
+        //m_allGamePieces[x,y] = gamepiece;
     }
 
     public void LlenarRandom()
@@ -144,14 +145,13 @@ public class Tablero : MonoBehaviour
     {
         for (int j = 0; j < largo; j++)
         {
-            Debug.Log("Entro en LlenarRandom()");
             Casilla casilla = casillas[i,j];
-            Debug.Log("casilla = "+casilla);;
             GameObject fichaRandom = Instantiate(ObtenerFichaRandom(), Vector3.zero, Quaternion.identity) as GameObject;
-            Debug.Log("Instanciada FichaRandom");
+        //    Debug.Log("Instanciada FichaRandom");
             if (fichaRandom != null)
             {
                 ColocarFicha(fichaRandom.GetComponent<Ficha>(), casilla);
+                fichaRandom.GetComponent<Ficha>().tablero = this;
             }
         }
     }
@@ -162,7 +162,12 @@ public class Tablero : MonoBehaviour
         if(casillaSeleccionada == null)
         {
             casillaSeleccionada = casilla;
-            Debug.Log("Casilla seleccionada: "+ casilla.name);
+            Debug.Log("Casilla seleccionada: " + casilla.name);
+
+            //Animacion de la ficha
+            Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
+            AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
+            animationS.rotationSpeed=60f;
         }
     }
 
@@ -171,6 +176,9 @@ public class Tablero : MonoBehaviour
         if(casillaSeleccionada != null)
         {
             casillaSeleccionada2 = casilla;
+           // Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
+           // AnimationScript animationS = fichaSeleccionada2.gameObject.GetComponent<AnimationScript>();
+           // animationS.rotationSpeed=60f;
         }
     }
 
@@ -178,29 +186,50 @@ public class Tablero : MonoBehaviour
     {
         if(casillaSeleccionada != null && casillaSeleccionada2 != null)
         {
+            Debug.Log("Entro en el if de AlSoltarCasilla() "+this.name);
         CambiarCasilla(casillaSeleccionada,casillaSeleccionada2);
         }
         casillaSeleccionada = null;
         casillaSeleccionada2 = null;
     }
 
+    //Esto no esta funcionando
+    /*
     public void CambiarCasilla(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
+        Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
+        Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
+
+        fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
+        fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
+    }
+    */
+    
+    public void CambiarCasilla(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
+    {
+        Debug.Log("CambiarCasilla: Entrando a CambiarCasillaRutina");
         StartCoroutine(CambiarCasillaRutina(casillaSeleccionada,casillaSeleccionada2));
     }
 
 
     IEnumerator CambiarCasillaRutina(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
+        Debug.Log("CambiarCasillaRutina");
         Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
         Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
+        AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
+        animationS.rotationSpeed=60f;
 
-       // if(fichaSeleccionada!= null && fichaSeleccionada2!= null){
+        if(fichaSeleccionada!= null && fichaSeleccionada2!= null){
         fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
         fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
         yield return new WaitForSeconds(tiempoCambio);
+        Debug.Log("CambiarCasillaRutina luego del yield return new WaitForSeconds");
         casillaSeleccionada.SetFicha(fichaSeleccionada2);
         casillaSeleccionada2.SetFicha(fichaSeleccionada);
-      //  }
+        animationS.rotationSpeed=10f;
+        }
     }
+
+    
 }

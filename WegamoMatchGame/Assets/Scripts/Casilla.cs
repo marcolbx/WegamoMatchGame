@@ -88,6 +88,10 @@ public abstract class Casilla : MonoBehaviour
     {
         if(tablero != null)
         {
+            //Parar animacion una vez soltado el click
+           // ficha = this.GetFicha();
+           // AnimationScript animationS = ficha.gameObject.GetComponent<AnimationScript>();
+           // animationS.rotationSpeed = 10f;
             tablero.AlSoltarCasilla();
         }
     }
