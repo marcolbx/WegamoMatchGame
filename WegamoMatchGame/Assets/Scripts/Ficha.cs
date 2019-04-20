@@ -64,25 +64,19 @@ public abstract class Ficha : MonoBehaviour
 
         while(!llegoADestino)
         {
-             Debug.Log("Posicion:"+this.transform.position+" Nombre:"+this.name);
-             Debug.Log("Distancia:"+Vector3.Distance(transform.position, destino));
+
             if(Vector3.Distance(transform.position, destino)<0.01f)
             {
-                Debug.Log("Entro en el if: Vector3.Distance(transform.position, destino)<0.001f ");
                 llegoADestino = true;
                 transform.position = destino;
 
-                if (tablero != null)
-                {
-
+                //De esta manera la rotacion no se vuelve a inicializar
                     float rotX=this.transform.eulerAngles.x;
                     float rotY = this.transform.eulerAngles.y;
                     float rotZ = this.transform.eulerAngles.z;
 
-                    tablero.ColocarFicha(this, casilla);
+                 //   tablero.ColocarFicha(this, casilla);
                     this.transform.eulerAngles = new Vector3(rotX, rotY, rotZ);
-                }
-                //SetCoord((int)destino.x,(int)destino.y);
                 break;
             }
         tiempoTranscurrido += Time.deltaTime;
