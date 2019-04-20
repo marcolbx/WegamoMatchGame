@@ -9,7 +9,6 @@ public abstract class Ficha : MonoBehaviour
     public FichaValor valor;         //El valor de la ficha
     public bool moviendo = false;          //Condicion que dice si la ficha se esta moviendo.
     public Tablero tablero; //Momentaneamente
-    
     /**
      * interpolation permite el movimiento visual de las fichas.
      * 
@@ -58,7 +57,6 @@ public abstract class Ficha : MonoBehaviour
     public IEnumerator RutinaMovimiento(Casilla casilla, float tiempoMovimiento)
     {
         Vector3 destino = new Vector3(casilla.x, casilla.y, 0);
-        Debug.Log("RutinaMovimiento: Posicion:"+this.transform.position+" Nombre: "+ this.name);
         Vector3 posicionInicial = transform.position;
         bool llegoADestino = false;
         float tiempoTranscurrido = 0f;
@@ -76,16 +74,20 @@ public abstract class Ficha : MonoBehaviour
 
                 if (tablero != null)
                 {
+
+                    float rotX=this.transform.eulerAngles.x;
+                    float rotY = this.transform.eulerAngles.y;
+                    float rotZ = this.transform.eulerAngles.z;
+
                     tablero.ColocarFicha(this, casilla);
+                    this.transform.eulerAngles = new Vector3(rotX, rotY, rotZ);
                 }
                 //SetCoord((int)destino.x,(int)destino.y);
                 break;
             }
         tiempoTranscurrido += Time.deltaTime;
-        Debug.Log("Tiempo transcurrido:"+tiempoTranscurrido);
-        float t = Mathf.Clamp(tiempoTranscurrido / tiempoMovimiento, 0f,1f);
+        float t = Mathf.Clamp(tiempoTranscurrido / 0.5f, 0f,1f);
             Debug.Log("t: " + t);
-            Debug.Log("interpolation: " + this.interpolation);
         switch (interpolation)
             {
                 case InterType.Linear:
