@@ -341,7 +341,7 @@ public class Tablero : MonoBehaviour
                 SpriteRenderer spriteRenderer = casillas[i, j].GetComponent<SpriteRenderer>();
                 spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
 
-                //   List<GamePiece> horizMatches = FindHorizontalMatches(i, j, 3);
+                //   List<GamePiece> horizMatches = EncontrarMatchesHorizontales(i, j, 3);
                 List<Casilla> vertMatches = EncontrarMatchesVerticales(casillas[i, j], 3);
                 if (vertMatches != null)
                     Debug.Log("XYZDevolviendo3 matchResultado, #Casillas= " + vertMatches.Count);
