@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Tablero : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Tablero : MonoBehaviour
     private int tamanoBorde = 2; //Permite alejar el tablero de la camara. Funciona como un padding
     public GameObject P_CasillaStandard; //Casillas a instanciar
     public GameObject[] fichasPrefabs;
+    public int minimoParaMatch = 3;
     Casilla[,] casillas; //Tiene toda la lista de las casillas
 
     private Casilla casillaSeleccionada;
@@ -19,10 +21,11 @@ public class Tablero : MonoBehaviour
     {
         casillas = new Casilla[ancho, largo];
         CreacionCasillas();
-        Debug.Log("Salio de creacionCasillas()");
+     //   Debug.Log("Salio de creacionCasillas()");
         ArreglarCamera();
         InicializarVecinas();
         LlenarRandom();
+        HighlightMatches();
     }
 
     // Update is called once per frame
@@ -64,7 +67,7 @@ public class Tablero : MonoBehaviour
 
     void InicializarVecinas()
     {
-        Debug.Log("Entro en InicializarVecinas");
+     //   Debug.Log("Entro en InicializarVecinas");
         for (int i = 0; i < ancho; i++)
         {
             for (int j = 0; j < largo; j++)
@@ -134,7 +137,7 @@ public class Tablero : MonoBehaviour
     Quaternion target = Quaternion.Euler(-110, 0, 0); //Se ve bonito con -110
     ficha.transform.rotation = target; 
     casilla.SetFicha(ficha);
-    Debug.Log(casilla.name + "Tiene la ficha: " + casilla.GetFicha().name);
+   // Debug.Log(casilla.name + "Tiene la ficha: " + casilla.GetFicha().name);
         //ficha.SetCoord(x, y);
         //m_allGamePieces[x,y] = gamepiece;
     }
@@ -151,7 +154,7 @@ public class Tablero : MonoBehaviour
             if (fichaRandom != null)
             {
                 ColocarFicha(fichaRandom.GetComponent<Ficha>(), casilla);
-                fichaRandom.GetComponent<Ficha>().tablero = this;
+              //  fichaRandom.GetComponent<Ficha>().tablero = this;
             }
         }
     }
@@ -162,7 +165,7 @@ public class Tablero : MonoBehaviour
         if(casillaSeleccionada == null)
         {
             casillaSeleccionada = casilla;
-            Debug.Log("Casilla seleccionada: " + casilla.name);
+      //      Debug.Log("Casilla seleccionada: " + casilla.name);
 
             //Animacion de la ficha
             Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
@@ -186,7 +189,7 @@ public class Tablero : MonoBehaviour
     {
         if(casillaSeleccionada != null && casillaSeleccionada2 != null)
         {
-            Debug.Log("Entro en el if de AlSoltarCasilla() "+this.name);
+        //    Debug.Log("Entro en el if de AlSoltarCasilla() "+this.name);
         CambiarCasilla(casillaSeleccionada,casillaSeleccionada2);
         }
         casillaSeleccionada = null;
@@ -207,14 +210,14 @@ public class Tablero : MonoBehaviour
     
     public void CambiarCasilla(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
-        Debug.Log("CambiarCasilla: Entrando a CambiarCasillaRutina");
+    //    Debug.Log("CambiarCasilla: Entrando a CambiarCasillaRutina");
         StartCoroutine(CambiarCasillaRutina(casillaSeleccionada,casillaSeleccionada2));
     }
 
 
     IEnumerator CambiarCasillaRutina(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
-        Debug.Log("CambiarCasillaRutina");
+    //    Debug.Log("CambiarCasillaRutina");
         Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
         Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
         AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
@@ -224,12 +227,281 @@ public class Tablero : MonoBehaviour
         fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
         fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
         yield return new WaitForSeconds(tiempoCambio);
-        Debug.Log("CambiarCasillaRutina luego del yield return new WaitForSeconds");
+    //    Debug.Log("CambiarCasillaRutina luego del yield return new WaitForSeconds");
         casillaSeleccionada.SetFicha(fichaSeleccionada2);
         casillaSeleccionada2.SetFicha(fichaSeleccionada);
         animationS.rotationSpeed=10f;
         }
     }
 
+    bool DentroDeLimites(int x, int y)
+    {
+        return (x >= 0 && x < ancho && y >= 0 && y < largo);
+    }
+
+    //Funcionales
+    /*
+    List<Casilla> EncontrarMatches(Casilla casilla, Vector2 direccionBusqueda, int minimo)
+    {
+        List<Casilla> matches = new List<Casilla>();
+        Ficha fichaInicial = null;
+
+        if (DentroDeLimites(casilla.x, casilla.y))
+        {
+            fichaInicial = casilla.GetFicha();
+        }
+        
+       // if (casilla.GetFicha())
+        //    fichaInicial = casilla.GetFicha();
+
+        if (fichaInicial != null)
+        {
+            matches.Add(casilla);
+        }
+        else
+        {
+            return null;
+        }
+
+        int proximoX;
+        int proximoY;
+        int valorMaximo = (ancho > largo) ? ancho : largo;
+
+        for(int i = 1; i < valorMaximo; i++)
+        {
+            proximoX = casilla.x + (int)Mathf.Clamp(direccionBusqueda.x, -1, 1) * i;
+            proximoY = casilla.y + (int)Mathf.Clamp(direccionBusqueda.y, -1, 1) * i;
+            if (!DentroDeLimites(proximoX, proximoY))
+            {
+                break;
+            }
+            if (casilla.SameFicha(casillas[proximoX, proximoY]))
+            {
+                matches.Add(casillas[proximoX, proximoY]);
+            }
+            else
+                break;
+        }
+        if (matches.Count >= minimo)
+        {
+            Debug.Log("Entromatch.Size()>= minimo (METODO) EncontrarMatches. Devolviendo un match mayor de 2");
+            Debug.Log("EntroMatch.Size()= " + matches.Count);
+            return matches;
+        }
+        return null;
+    }
+
+    List<Casilla> FindVerticalMatches(Casilla casilla, int minLength = 3)
+    {
+        int startX = casilla.x;
+        int startY = casilla.y;
+        Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
+        List<Casilla> upwardMatches = EncontrarMatches(casilla, new Vector2(0, 1), 2);
+        
+        Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
+
+        List<Casilla> downwardMatches = EncontrarMatches(casilla, new Vector2(0, -1), 2);
+
+        if (upwardMatches == null)
+            upwardMatches = new List<Casilla>();
+        if (downwardMatches == null)
+            downwardMatches = new List<Casilla>();
+
+        if(upwardMatches != null)
+        {
+            Debug.Log("upwardMatches.Size()=" + upwardMatches.Count);
+        }
+
+     var resultado = upwardMatches.Union(downwardMatches).ToList();
+      //  resultado = UnirMatches(upwardMatches, downwardMatches);
+       // Debug.Log("XYZDevolviendo2 matchResultado, #Casillas= " + resultado.Size());
+        //var combinedMatches = upwardMatches.Union(downwardMatches).ToList();
+       // return (resultado.Size() >= minLength) ? resultado : null;
+       return (resultado.Count >= minLength) ? resultado : null; //Devuelve la lista de Matches si son > de 3, sino devuelve null
+    }
+
+    void HighlightMatches()
+    {
+        for (int i = 0; i < ancho; i++)
+        {
+            for (int j = 0; j < largo; j++)
+            {
+                SpriteRenderer spriteRenderer = casillas[i, j].GetComponent<SpriteRenderer>();
+                spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+
+                //   List<GamePiece> horizMatches = FindHorizontalMatches(i, j, 3);
+                List<Casilla> vertMatches = FindVerticalMatches(casillas[i, j], 3);
+                if (vertMatches != null)
+                    Debug.Log("XYZDevolviendo3 matchResultado, #Casillas= " + vertMatches.Count);
+                //    if (horizMatches == null)
+                //        horizMatches = new List<GamePiece>();
+                if (vertMatches == null)
+                    vertMatches = new List<Casilla>();
+                //      var combinedMatches = horizMatches.Union(vertMatches).ToList();
+
+                //Debug.Log("Entrando al if de vertMatches.Size()");
+                if (vertMatches.Count > 0)
+                {
+                    Debug.Log("Entro en vertMatches.Size>0 (METODO HighlightMatches)");
+                    foreach (Casilla casilla in vertMatches)
+                    {
+                        Debug.Log("Casilla con Match: " + casilla.name);
+                        spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
+                        spriteRenderer.color = new Color(0, 0, 0, 1);
+                    }
+                }
+            }
+        }
+    }
+*/
+
+    //No Funcionales
+
+    Match EncontrarMatches(Casilla casilla, Vector2 direccionBusqueda, int minimo)
+    {
+        Match matches = new Match();
+        Ficha fichaInicial = null;
+
+        if (DentroDeLimites(casilla.x, casilla.y))
+        {
+            fichaInicial = casilla.GetFicha();
+        }
+        /*
+        if (casilla.GetFicha())
+            fichaInicial = casilla.GetFicha();*/
+
+        if (fichaInicial != null)
+        {
+            matches.AgregarCasilla(casilla);
+        }
+        else
+        {
+            return null;
+        }
+
+        int proximoX;
+        int proximoY;
+        int valorMaximo = (ancho > largo) ? ancho : largo;
+
+        for (int i = 1; i < valorMaximo; i++)
+        {
+            proximoX = casilla.x + (int)Mathf.Clamp(direccionBusqueda.x, -1, 1) * i;
+            proximoY = casilla.y + (int)Mathf.Clamp(direccionBusqueda.y, -1, 1) * i;
+            if (!DentroDeLimites(proximoX, proximoY))
+            {
+                break;
+            }
+            if (casilla.SameFicha(casillas[proximoX, proximoY]))
+            {
+                matches.AgregarCasilla(casillas[proximoX, proximoY]);
+            }
+            else
+                break;
+        }
+        if (matches.Size() >= minimo)
+        {
+            Debug.Log("Entromatch.Size()>= minimo (METODO) EncontrarMatches. Devolviendo un match mayor de 2");
+            Debug.Log("XYZDevolviendo: " + matches.Size());
+            return matches;
+        }
+        return null;
+    }
+
+    Match FindVerticalMatches(Casilla casilla, int minLength = 3)
+    {
+        int startX = casilla.x;
+        int startY = casilla.y;
+        Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
+        Match upwardMatches = new Match();
+        upwardMatches = DeepCopy(EncontrarMatches(casilla, new Vector2(0, 1), 2));
+        Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
+        Match downwardMatches = new Match();
+        upwardMatches = DeepCopy(EncontrarMatches(casilla, new Vector2(0, -1), 2));
+
+        if (upwardMatches == null)
+            upwardMatches = new Match();
+        if (downwardMatches == null)
+            downwardMatches = new Match();
+
+        if (upwardMatches != null)
+        {
+            Debug.Log("XYZDevolviendo2:" + upwardMatches.Size());
+        }
+        if (downwardMatches != null)
+        {
+            Debug.Log("XYZDevolviendo2:" + downwardMatches.Size());
+        }
+
+        var resultado = upwardMatches.getCasillas().Union(downwardMatches.getCasillas()).ToList();
+        Match matchCombinado = new Match();
+        //  resultado = UnirMatches(upwardMatches, downwardMatches);
+        // Debug.Log("XYZDevolviendo2 matchResultado, #Casillas= " + resultado.Size());
+        //var combinedMatches = upwardMatches.Union(downwardMatches).ToList();
+        // return (resultado.Size() >= minLength) ? resultado : null;
+        matchCombinado.setCasillas(resultado);
+        Debug.Log("XYZDevolviendo2.2: " + matchCombinado.Size());
+        return (resultado.Count >= minLength) ? matchCombinado : null; //Devuelve la lista de Matches si son > de 3, sino devuelve null
+    }
+
+    static Match DeepCopy(Match existing)
+    {
+        if (existing != null)
+        {
+            Match temp = new Match();
+            temp = existing;
+            temp.setCasillas(existing.getCasillas());
+            return temp;
+        }
+        else return null;
+    }
+
+    void HighlightMatches()
+    {
+        for (int i = 0; i < ancho; i++)
+        {
+            for (int j = 0; j < largo; j++)
+            {
+                SpriteRenderer spriteRenderer = casillas[i, j].GetComponent<SpriteRenderer>();
+                spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+
+                //   List<GamePiece> horizMatches = FindHorizontalMatches(i, j, 3);
+                Match vertMatches = FindVerticalMatches(casillas[i, j], 3);
+                if (vertMatches != null)
+                    Debug.Log("XYZDevolviendo3 matchResultado, #Casillas= " + vertMatches.Size());
+                //    if (horizMatches == null)
+                //        horizMatches = new List<GamePiece>();
+                if (vertMatches == null)
+                    vertMatches = new Match();
+                //      var combinedMatches = horizMatches.Union(vertMatches).ToList();
+
+                //Debug.Log("Entrando al if de vertMatches.Size()");
+                if (vertMatches.Size() > 0)
+                {
+                    Debug.Log("Entro en vertMatches.Size>0 (METODO HighlightMatches)");
+                    foreach (Casilla casilla in vertMatches.getCasillas())
+                    {
+                        Debug.Log("Casilla con Match: " + casilla.name);
+                        spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
+                        spriteRenderer.color = new Color(0, 0, 0, 1);
+                    }
+                }
+            }
+        }
+    }
+
+    static Match UnirMatches(List<Casilla> match, List<Casilla> match2)
+    {
+        Debug.Log("XYZCasillasU match.Size()" + match.Count);
+        Debug.Log("XYZCasillasU match2.Size()" + match2.Count);
+        var casillasUnidas = match.Union(match2).ToList();
+            Debug.Log("XYZCasillas Unidas: " + casillasUnidas.Count());
+        Debug.Log("XYZCasillas Unidas: " + casillasUnidas.Count);
+        Match matchResultado = new Match();
+            matchResultado.setCasillas(casillasUnidas);
+        Debug.Log("XYZDevolviendo1 matchResultado, #Casillas= " + matchResultado.Size());
+            return matchResultado;
+    }
+
     
+
 }

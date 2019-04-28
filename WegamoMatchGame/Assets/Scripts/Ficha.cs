@@ -8,11 +8,14 @@ public abstract class Ficha : MonoBehaviour
     public GameObject[] gameObjects;  //Se colocan los objetos que pertencen a cada uno. (Esto para el momento de renderizar el tipo de ficha)
     public FichaValor valor;         //El valor de la ficha
     public bool moviendo = false;          //Condicion que dice si la ficha se esta moviendo.
-    public Tablero tablero; //Momentaneamente
+   // public Tablero tablero; //Momentaneamente
+                            
+    public FichaValor fichaValor;
+
     /**
-     * interpolation permite el movimiento visual de las fichas.
-     * 
-     */
+    * interpolation permite el movimiento visual de las fichas.
+    * 
+    */
     public InterType interpolation = InterType.SmootherStep;
 
     public enum InterType

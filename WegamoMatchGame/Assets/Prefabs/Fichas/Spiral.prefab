@@ -117,3 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameObjects: []
   valor: 4
+  moviendo: 0
+  tablero: {fileID: 0}
+  fichaValor: 4
+  interpolation: 4

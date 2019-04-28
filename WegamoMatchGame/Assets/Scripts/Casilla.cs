@@ -10,6 +10,7 @@ public abstract class Casilla : MonoBehaviour
     private Dictionary<int, Casilla> vecinasxdireccion;
     private Ficha ficha;
     private bool comprobanteExistencia = false;
+    private Match match;
 
     // Start is called before the first frame update
     void Start()
