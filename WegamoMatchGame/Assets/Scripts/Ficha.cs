@@ -57,6 +57,9 @@ public abstract class Ficha : MonoBehaviour
         }
     }
 
+    /**
+     * RutinaMovimiento permite la visualizacion del movimiento de cambio usando el tiempo.
+     */
     public IEnumerator RutinaMovimiento(Casilla casilla, float tiempoMovimiento)
     {
         Vector3 destino = new Vector3(casilla.x, casilla.y, 0);

@@ -8,7 +8,7 @@ public class Tablero : MonoBehaviour
     public int ancho, largo;  //Define las dimensiones del tablero. x,y
     private int tamanoBorde = 2; //Permite alejar el tablero de la camara. Funciona como un padding
     public GameObject P_CasillaStandard; //Casillas a instanciar
-    public GameObject[] fichasPrefabs;
+    public GameObject[] fichasPrefabs; //Fichas a instanciar
     public int minimoParaMatch = 3;
     Casilla[,] casillas; //Tiene toda la lista de las casillas
 
@@ -21,7 +21,6 @@ public class Tablero : MonoBehaviour
     {
         casillas = new Casilla[ancho, largo];
         CreacionCasillas();
-     //   Debug.Log("Salio de creacionCasillas()");
         ArreglarCamera();
         InicializarVecinas();
         LlenarRandom();
@@ -36,7 +35,6 @@ public class Tablero : MonoBehaviour
 
     public Tablero(int ancho, int largo, GameObject P_CasillaStandard)
     {
-       // Debug.Log("Entre en el constructor con parametros");
        // Debug.Log("ancho:" + ancho + " largo: " + largo);
         this.ancho = ancho;
         this.largo = largo;
@@ -46,6 +44,9 @@ public class Tablero : MonoBehaviour
         CreacionCasillas();
     }
 
+    /**
+     * CreacionCasillas() permite crear la cantidad de casillas mediante el ancho y largo introducido.
+     */
     public void CreacionCasillas()
     {
         if (ancho != null && largo != null)
@@ -65,6 +66,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+    /**
+     * InicializarVecina() permite a las casillas saber cuales casillas tienen a los lados.
+     */
     void InicializarVecinas()
     {
      //   Debug.Log("Entro en InicializarVecinas");
@@ -116,6 +120,9 @@ public class Tablero : MonoBehaviour
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize; // if else 
     }
 
+    /**
+     * ObtenerFichaRandom() obtiene una ficha aleatoriamente del Array de fichasPrefabs.
+     */
     GameObject ObtenerFichaRandom()
     {
    // Debug.Log("Entro en ObtenerFichaRandom");
@@ -125,6 +132,9 @@ public class Tablero : MonoBehaviour
     return fichasPrefabs[randomIndex];
     }
 
+    /**
+     * ColocarFicha() le agrega la Ficha como atributo a la clase Casilla.
+     */
     public void ColocarFicha(Ficha ficha, Casilla casilla)
     {
     if (ficha == null)
@@ -138,10 +148,11 @@ public class Tablero : MonoBehaviour
     ficha.transform.rotation = target; 
     casilla.SetFicha(ficha);
    // Debug.Log(casilla.name + "Tiene la ficha: " + casilla.GetFicha().name);
-        //ficha.SetCoord(x, y);
-        //m_allGamePieces[x,y] = gamepiece;
     }
 
+    /**
+     * LlenarRandom() llenara las casillas con fichas aleatorias.
+     */
     public void LlenarRandom()
     {
     for (int i = 0; i < ancho; i++)
@@ -150,7 +161,6 @@ public class Tablero : MonoBehaviour
         {
             Casilla casilla = casillas[i,j];
             GameObject fichaRandom = Instantiate(ObtenerFichaRandom(), Vector3.zero, Quaternion.identity) as GameObject;
-        //    Debug.Log("Instanciada FichaRandom");
             if (fichaRandom != null)
             {
                 ColocarFicha(fichaRandom.GetComponent<Ficha>(), casilla);
@@ -160,54 +170,47 @@ public class Tablero : MonoBehaviour
     }
     }
 
+    /**
+     * SeleccionarCasilla(Casilla ), se comunica con el metodo de mouseinput de casilla.
+     */
     public void SeleccionarCasilla(Casilla casilla)
     {
         if(casillaSeleccionada == null)
         {
             casillaSeleccionada = casilla;
-      //      Debug.Log("Casilla seleccionada: " + casilla.name);
-
-            //Animacion de la ficha
-            Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
-            AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
-            animationS.rotationSpeed=60f;
+            //Debug.Log("Casilla seleccionada: " + casilla.name);
+            AnimarCasilla(casillaSeleccionada);
         }
     }
 
+    /**
+     * ArrastradaCasilla(Casilla ), se comunica con el metodo de mouseinput de casilla.
+     */
     public void ArrastradaCasilla(Casilla casilla)
     {
         if(casillaSeleccionada != null)
         {
             casillaSeleccionada2 = casilla;
-           // Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
-           // AnimationScript animationS = fichaSeleccionada2.gameObject.GetComponent<AnimationScript>();
-           // animationS.rotationSpeed=60f;
         }
     }
 
+    /**
+     * AlSoltarCasilla(), se comunica con el metodo de mouseinput de casilla. En caso de tener 2 casillas seleccionadas, llama al cambio.
+     */
     public void AlSoltarCasilla()
     {
         if(casillaSeleccionada != null && casillaSeleccionada2 != null)
         {
-        //    Debug.Log("Entro en el if de AlSoltarCasilla() "+this.name);
+        //Debug.Log("Entro en el if de AlSoltarCasilla() "+this.name);
         CambiarCasilla(casillaSeleccionada,casillaSeleccionada2);
         }
         casillaSeleccionada = null;
         casillaSeleccionada2 = null;
     }
 
-    //Esto no esta funcionando
-    /*
-    public void CambiarCasilla(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
-    {
-        Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
-        Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
-
-        fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
-        fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
-    }
-    */
-    
+    /**
+     * CambiarCasilla() cambia las casillas seleccionadas por el usuario.
+     */
     public void CambiarCasilla(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
     //    Debug.Log("CambiarCasilla: Entrando a CambiarCasillaRutina");
@@ -215,13 +218,14 @@ public class Tablero : MonoBehaviour
     }
 
 
+    /**
+     * CambiarCasillaRutina() Permite usar deltaTime para manejar el tiempo de cambio entre casillas.
+     */
     IEnumerator CambiarCasillaRutina(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
     //    Debug.Log("CambiarCasillaRutina");
         Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
         Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
-        AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
-        animationS.rotationSpeed=60f;
 
         if(fichaSeleccionada!= null && fichaSeleccionada2!= null){
         fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
@@ -230,8 +234,17 @@ public class Tablero : MonoBehaviour
     //    Debug.Log("CambiarCasillaRutina luego del yield return new WaitForSeconds");
         casillaSeleccionada.SetFicha(fichaSeleccionada2);
         casillaSeleccionada2.SetFicha(fichaSeleccionada);
-        animationS.rotationSpeed=10f;
+
+            AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
+            animationS.rotationSpeed=10f;
         }
+    }
+
+    public void AnimarCasilla(Casilla casilla)
+    {
+        Ficha ficha = casilla.GetFicha();
+        AnimationScript animationS = ficha.gameObject.GetComponent<AnimationScript>();
+        animationS.rotationSpeed = 60f;
     }
 
     bool DentroDeLimites(int x, int y)
@@ -240,7 +253,6 @@ public class Tablero : MonoBehaviour
     }
 
     //Funcionales
-    /*
     List<Casilla> EncontrarMatches(Casilla casilla, Vector2 direccionBusqueda, int minimo)
     {
         List<Casilla> matches = new List<Casilla>();
@@ -291,7 +303,7 @@ public class Tablero : MonoBehaviour
         return null;
     }
 
-    List<Casilla> FindVerticalMatches(Casilla casilla, int minLength = 3)
+    List<Casilla> EncontrarMatchesVerticales(Casilla casilla, int minLength = 3)
     {
         int startX = casilla.x;
         int startY = casilla.y;
@@ -330,7 +342,7 @@ public class Tablero : MonoBehaviour
                 spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
 
                 //   List<GamePiece> horizMatches = FindHorizontalMatches(i, j, 3);
-                List<Casilla> vertMatches = FindVerticalMatches(casillas[i, j], 3);
+                List<Casilla> vertMatches = EncontrarMatchesVerticales(casillas[i, j], 3);
                 if (vertMatches != null)
                     Debug.Log("XYZDevolviendo3 matchResultado, #Casillas= " + vertMatches.Count);
                 //    if (horizMatches == null)
@@ -348,15 +360,16 @@ public class Tablero : MonoBehaviour
                         Debug.Log("Casilla con Match: " + casilla.name);
                         spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
                         spriteRenderer.color = new Color(0, 0, 0, 1);
+                        AnimarCasilla(casilla);
                     }
                 }
             }
         }
     }
-*/
 
     //No Funcionales
 
+        /*
     Match EncontrarMatches(Casilla casilla, Vector2 direccionBusqueda, int minimo)
     {
         Match matches = new Match();
@@ -366,9 +379,6 @@ public class Tablero : MonoBehaviour
         {
             fichaInicial = casilla.GetFicha();
         }
-        /*
-        if (casilla.GetFicha())
-            fichaInicial = casilla.GetFicha();*/
 
         if (fichaInicial != null)
         {
@@ -502,6 +512,6 @@ public class Tablero : MonoBehaviour
             return matchResultado;
     }
 
-    
+    */
 
 }
