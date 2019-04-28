@@ -332,6 +332,35 @@ public class Tablero : MonoBehaviour
        return (resultado.Count >= minLength) ? resultado : null; //Devuelve la lista de Matches si son > de 3, sino devuelve null
     }
 
+    List<Casilla> EncontrarMatchesHorizontales(Casilla casilla, int minLength = 3)
+    {
+        int startX = casilla.x;
+        int startY = casilla.y;
+        Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
+        List<Casilla> rightMatches = EncontrarMatches(casilla, new Vector2(1, 0), 2);
+
+        Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
+
+        List<Casilla> leftMatches = EncontrarMatches(casilla, new Vector2(-1, 0), 2);
+
+        if (rightMatches == null)
+            rightMatches = new List<Casilla>();
+        if (leftMatches == null)
+            leftMatches = new List<Casilla>();
+
+        if (rightMatches != null)
+        {
+            Debug.Log("upwardMatches.Size()=" + rightMatches.Count);
+        }
+
+        var resultado = rightMatches.Union(leftMatches).ToList();
+        //  resultado = UnirMatches(upwardMatches, downwardMatches);
+        // Debug.Log("XYZDevolviendo2 matchResultado, #Casillas= " + resultado.Size());
+        //var combinedMatches = upwardMatches.Union(downwardMatches).ToList();
+        // return (resultado.Size() >= minLength) ? resultado : null;
+        return (resultado.Count >= minLength) ? resultado : null; //Devuelve la lista de Matches si son > de 3, sino devuelve null
+    }
+
     void HighlightMatches()
     {
         for (int i = 0; i < ancho; i++)
@@ -341,21 +370,21 @@ public class Tablero : MonoBehaviour
                 SpriteRenderer spriteRenderer = casillas[i, j].GetComponent<SpriteRenderer>();
                 spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
 
-                //   List<GamePiece> horizMatches = EncontrarMatchesHorizontales(i, j, 3);
+                List<Casilla> horizMatches = EncontrarMatchesHorizontales(casillas[i, j], 3);
                 List<Casilla> vertMatches = EncontrarMatchesVerticales(casillas[i, j], 3);
                 if (vertMatches != null)
                     Debug.Log("XYZDevolviendo3 matchResultado, #Casillas= " + vertMatches.Count);
-                //    if (horizMatches == null)
-                //        horizMatches = new List<GamePiece>();
+                if (horizMatches == null)
+                horizMatches = new List<Casilla>();
                 if (vertMatches == null)
                     vertMatches = new List<Casilla>();
-                //      var combinedMatches = horizMatches.Union(vertMatches).ToList();
+                var combinedMatches = horizMatches.Union(vertMatches).ToList();
 
                 //Debug.Log("Entrando al if de vertMatches.Size()");
-                if (vertMatches.Count > 0)
+                if (combinedMatches.Count > 0)
                 {
                     Debug.Log("Entro en vertMatches.Size>0 (METODO HighlightMatches)");
-                    foreach (Casilla casilla in vertMatches)
+                    foreach (Casilla casilla in combinedMatches)
                     {
                         Debug.Log("Casilla con Match: " + casilla.name);
                         spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
