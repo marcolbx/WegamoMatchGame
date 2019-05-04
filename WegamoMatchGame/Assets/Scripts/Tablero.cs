@@ -243,6 +243,26 @@ public class Tablero : MonoBehaviour
             animationS.rotationSpeed=10f;
         }
         HighlightMatches();
+        var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
+
+        //Debug.Log("Entrando al if de vertMatches.Size()");
+        if (totalMatches.Count > 0)
+        {
+            foreach (Casilla casilla in totalMatches)
+            {
+                EliminarPiezaCasilla(casilla);
+            }
+        }
+        var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
+
+        //Debug.Log("Entrando al if de vertMatches.Size()");
+        if (totalMatches2.Count > 0)
+        {
+            foreach (Casilla casilla in totalMatches2)
+            {
+                EliminarPiezaCasilla(casilla);
+            }
+        }
     }
 
     public void AnimarCasilla(Casilla casilla)
@@ -302,6 +322,8 @@ public class Tablero : MonoBehaviour
             {
                 break;
             }
+            if (casillas[proximoX, proximoY].GetFicha() == null)
+                break;
             if (casilla.SameFicha(casillas[proximoX, proximoY]))
             {
                 matches.Add(casillas[proximoX, proximoY]);
