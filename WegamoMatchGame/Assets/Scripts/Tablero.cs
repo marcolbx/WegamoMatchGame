@@ -263,6 +263,13 @@ public class Tablero : MonoBehaviour
                 EliminarPiezaCasilla(casilla);
             }
         }
+
+        yield return new WaitForSeconds(tiempoCambio);
+        if (totalMatches.Count > 0)
+            HighlightDesactivar(totalMatches);
+        if (totalMatches2.Count > 0)
+            HighlightDesactivar(totalMatches2);
+
     }
 
     public void AnimarCasilla(Casilla casilla)
@@ -416,6 +423,15 @@ public class Tablero : MonoBehaviour
     {
         SpriteRenderer spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
         spriteRenderer.color = new Color(0, 0, 0, 1);
+    }
+
+    void HighlightDesactivar(List<Casilla> casillas)
+    {
+        foreach (Casilla casilla in casillas)
+        {
+            SpriteRenderer spriteRenderer = casilla.GetComponent<SpriteRenderer>();
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+        }
     }
 
     void HighlightMatches()
