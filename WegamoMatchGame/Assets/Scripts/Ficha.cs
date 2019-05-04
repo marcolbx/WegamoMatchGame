@@ -67,7 +67,7 @@ public abstract class Ficha : MonoBehaviour
         bool llegoADestino = false;
         float tiempoTranscurrido = 0f;
         moviendo = true;
-
+        Debug.Log("Entro en RutinaMovimiento");
         while(!llegoADestino)
         {
 
@@ -87,7 +87,7 @@ public abstract class Ficha : MonoBehaviour
             }
         tiempoTranscurrido += Time.deltaTime;
         float t = Mathf.Clamp(tiempoTranscurrido / 0.5f, 0f,1f);
-            Debug.Log("t: " + t);
+           // Debug.Log("t: " + t);
         switch (interpolation)
             {
                 case InterType.Linear:

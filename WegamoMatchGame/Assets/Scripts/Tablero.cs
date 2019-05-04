@@ -24,7 +24,7 @@ public class Tablero : MonoBehaviour
         ArreglarCamera();
         InicializarVecinas();
         LlenarRandom();
-        HighlightMatches();
+       // HighlightMatches();
     }
 
     // Update is called once per frame
@@ -231,18 +231,18 @@ public class Tablero : MonoBehaviour
         Debug.Log("Casilla Seleccionada2: " + casillaSeleccionada2.name + "Ficha Seleccionada2: " + fichaSeleccionada2 + fichaSeleccionada2.GetValor());
 
         if (fichaSeleccionada!= null && fichaSeleccionada2!= null){
-        fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
-        fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
-        yield return new WaitForSeconds(tiempoCambio);
+            fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
+            fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
+            yield return new WaitForSeconds(tiempoCambio);
 
-            //    Debug.Log("CambiarCasillaRutina luego del yield return new WaitForSeconds");
             casillaSeleccionada.SetFicha(fichaSeleccionada2);
-        casillaSeleccionada2.SetFicha(fichaSeleccionada);
+            casillaSeleccionada2.SetFicha(fichaSeleccionada);
 
-            AnimationScript animationS = fichaSeleccionada.gameObject.GetComponent<AnimationScript>();
-            animationS.rotationSpeed=10f;
+            DesanimarCasilla(casillaSeleccionada2);    
         }
+
         HighlightMatches();
+        yield return new WaitForSeconds(tiempoCambio +1f);
         var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
 
         //Debug.Log("Entrando al if de vertMatches.Size()");
@@ -277,6 +277,14 @@ public class Tablero : MonoBehaviour
         Ficha ficha = casilla.GetFicha();
         AnimationScript animationS = ficha.gameObject.GetComponent<AnimationScript>();
         animationS.rotationSpeed = 60f;
+    }
+    public void AnimarCasillaMinimizarFicha(List<Casilla> casillas)
+    {
+        foreach (Casilla casilla in casillas)
+        {
+            Ficha ficha = casilla.GetFicha();
+            ficha.transform.localScale -= new Vector3(0.05f, 0.05f, 0);
+        }
     }
 
     public void DesanimarCasilla(Casilla casilla)
@@ -487,6 +495,15 @@ public class Tablero : MonoBehaviour
         }
     }
 
+    bool Vecinas(Casilla casilla1, Casilla casilla2)
+    {
+        if (Mathf.Abs(casilla1.x - casilla2.x) == 1 && casilla1.y == casilla2.y)
+            return true;
+        if (Mathf.Abs(casilla1.y - casilla2.y) == 1 && casilla1.x == casilla2.x)
+            return true;
+
+        return false;
+    }
 
 
     //No Funcionales
