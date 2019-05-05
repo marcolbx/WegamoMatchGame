@@ -15,6 +15,7 @@ public class Tablero : MonoBehaviour
     private Casilla casillaSeleccionada;
     private Casilla casillaSeleccionada2;
     public float tiempoCambio = 0.5f;
+    private bool devuelto = false;
 
     // Start is called before the first frame update
     void Start()
@@ -224,7 +225,7 @@ public class Tablero : MonoBehaviour
      */
     IEnumerator CambiarCasillaRutina(Casilla casillaSeleccionada, Casilla casillaSeleccionada2)
     {
-    //    Debug.Log("CambiarCasillaRutina");
+
         Ficha fichaSeleccionada = casillaSeleccionada.GetFicha();
         Ficha fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
         Debug.Log("Casilla Seleccionada: " + casillaSeleccionada.name + "Ficha Seleccionada: " + fichaSeleccionada + fichaSeleccionada.GetValor());
@@ -237,39 +238,57 @@ public class Tablero : MonoBehaviour
 
             casillaSeleccionada.SetFicha(fichaSeleccionada2);
             casillaSeleccionada2.SetFicha(fichaSeleccionada);
+            Debug.Log("NUEVOS Casilla Seleccionada: " + casillaSeleccionada.name + "Ficha Seleccionada: " + casillaSeleccionada.GetFicha() + casillaSeleccionada.GetFicha().GetValor());
+            Debug.Log("NUEVOS Casilla Seleccionada2: " + casillaSeleccionada2.name + "Ficha Seleccionada2: " + casillaSeleccionada2.GetFicha() + casillaSeleccionada2.GetFicha().GetValor());
+            var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
+            var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
 
-            DesanimarCasilla(casillaSeleccionada2);    
-        }
+            HighlightMatches();
+            yield return new WaitForSeconds(tiempoCambio + 1f);
 
-        HighlightMatches();
-        yield return new WaitForSeconds(tiempoCambio +1f);
-        var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
-
-        //Debug.Log("Entrando al if de vertMatches.Size()");
-        if (totalMatches.Count > 0)
-        {
-            foreach (Casilla casilla in totalMatches)
+            /*
+            if (totalMatches.Count == 0 && totalMatches2.Count == 0)
             {
-                EliminarPiezaCasilla(casilla);
-            }
-        }
-        var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
+                if (devuelto == false)
+                {
+                    devuelto = true;
+                    StartCoroutine(CambiarCasillaRutina(casillaSeleccionada, casillaSeleccionada2));
+                }
+            }*/
 
-        //Debug.Log("Entrando al if de vertMatches.Size()");
-        if (totalMatches2.Count > 0)
-        {
-            foreach (Casilla casilla in totalMatches2)
+            if (totalMatches.Count == 0 && totalMatches2.Count == 0)
             {
-                EliminarPiezaCasilla(casilla);
+                fichaSeleccionada = casillaSeleccionada.GetFicha();
+                fichaSeleccionada2 = casillaSeleccionada2.GetFicha();
+                fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
+                fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
+                yield return new WaitForSeconds(tiempoCambio);
+
+                casillaSeleccionada.SetFicha(fichaSeleccionada2);
+                casillaSeleccionada2.SetFicha(fichaSeleccionada);
             }
+
+            if (totalMatches.Count > 0)
+            {
+                foreach (Casilla casilla in totalMatches)
+                {
+                    EliminarPiezaCasilla(casilla);
+                }
+            }
+            if (totalMatches2.Count > 0)
+            {
+                foreach (Casilla casilla in totalMatches2)
+                {
+                    EliminarPiezaCasilla(casilla);
+                }
+            }
+
+            yield return new WaitForSeconds(tiempoCambio);
+            if (totalMatches.Count > 0)
+                HighlightDesactivar(totalMatches);
+            if (totalMatches2.Count > 0)
+                HighlightDesactivar(totalMatches2);
         }
-
-        yield return new WaitForSeconds(tiempoCambio);
-        if (totalMatches.Count > 0)
-            HighlightDesactivar(totalMatches);
-        if (totalMatches2.Count > 0)
-            HighlightDesactivar(totalMatches2);
-
     }
 
     public void AnimarCasilla(Casilla casilla)
@@ -348,8 +367,8 @@ public class Tablero : MonoBehaviour
         }
         if (matches.Count >= minimo)
         {
-            Debug.Log("Entromatch.Size()>= minimo (METODO) EncontrarMatches. Devolviendo un match mayor de 2");
-            Debug.Log("EntroMatch.Size()= " + matches.Count);
+         //   Debug.Log("Entromatch.Size()>= minimo (METODO) EncontrarMatches. Devolviendo un match mayor de 2");
+         //   Debug.Log("EntroMatch.Size()= " + matches.Count);
             return matches;
         }
         return null;
@@ -359,10 +378,10 @@ public class Tablero : MonoBehaviour
     {
         int startX = casilla.x;
         int startY = casilla.y;
-        Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
+     //   Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
         List<Casilla> upwardMatches = EncontrarMatches(casilla, new Vector2(0, 1), 2);
         
-        Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
+     //   Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
 
         List<Casilla> downwardMatches = EncontrarMatches(casilla, new Vector2(0, -1), 2);
 
@@ -370,11 +389,11 @@ public class Tablero : MonoBehaviour
             upwardMatches = new List<Casilla>();
         if (downwardMatches == null)
             downwardMatches = new List<Casilla>();
-
+/*
         if(upwardMatches != null)
         {
             Debug.Log("upwardMatches.Size()=" + upwardMatches.Count);
-        }
+        }*/
 
      var resultado = upwardMatches.Union(downwardMatches).ToList();
       //  resultado = UnirMatches(upwardMatches, downwardMatches);
@@ -388,10 +407,10 @@ public class Tablero : MonoBehaviour
     {
         int startX = casilla.x;
         int startY = casilla.y;
-        Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
+     //   Debug.Log("Entrando a upwardMatches (METODO: FindVerticalMatches)");
         List<Casilla> rightMatches = EncontrarMatches(casilla, new Vector2(1, 0), 2);
 
-        Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
+     //   Debug.Log("Entrando a downwardMatches (METODO: FindVerticalMatches)");
 
         List<Casilla> leftMatches = EncontrarMatches(casilla, new Vector2(-1, 0), 2);
 
@@ -399,11 +418,11 @@ public class Tablero : MonoBehaviour
             rightMatches = new List<Casilla>();
         if (leftMatches == null)
             leftMatches = new List<Casilla>();
-
+/*
         if (rightMatches != null)
         {
             Debug.Log("upwardMatches.Size()=" + rightMatches.Count);
-        }
+        }*/
 
         var resultado = rightMatches.Union(leftMatches).ToList();
         //  resultado = UnirMatches(upwardMatches, downwardMatches);
