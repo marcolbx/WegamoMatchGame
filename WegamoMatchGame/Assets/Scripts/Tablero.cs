@@ -204,6 +204,7 @@ public class Tablero : MonoBehaviour
         if(casillaSeleccionada != null && casillaSeleccionada2 != null)
         {
                 Debug.Log("Casilla Seleccionada2: " + casillaSeleccionada2.name + "Ficha Seleccionada: " + casillaSeleccionada2.GetFicha() + casillaSeleccionada2.GetFicha().GetValor());
+                if (Vecinas2(casillaSeleccionada, casillaSeleccionada2)) 
                 CambiarCasilla(casillaSeleccionada,casillaSeleccionada2);
         }
         casillaSeleccionada = null;
@@ -244,7 +245,7 @@ public class Tablero : MonoBehaviour
             var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
 
             HighlightMatches();
-            yield return new WaitForSeconds(tiempoCambio + 1f);
+            yield return new WaitForSeconds(tiempoCambio + 0.5f);
 
             /*
             if (totalMatches.Count == 0 && totalMatches2.Count == 0)
@@ -514,6 +515,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+    /*
+     * Vecinas devuelve true si en efecto son vecinas. Usando las posiciones de las casillas. Forma 1 de hacerlo.
+     */
     bool Vecinas(Casilla casilla1, Casilla casilla2)
     {
         if (Mathf.Abs(casilla1.x - casilla2.x) == 1 && casilla1.y == casilla2.y)
@@ -523,6 +527,19 @@ public class Tablero : MonoBehaviour
 
         return false;
     }
+
+    /*
+     * Vecinas2 devuelve true si en efecto son vecinas. Usando el atributo vecinas de las casillas. Forma 2 de hacerlo.
+     */
+    bool Vecinas2(Casilla casilla1, Casilla casilla2)
+    {
+        if (casilla1.vecinas.Contains(casilla2))
+            return true;
+        else
+            return false;
+    }
+
+
 
 
     //No Funcionales

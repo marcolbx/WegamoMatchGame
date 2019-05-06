@@ -6,7 +6,7 @@ public abstract class Casilla : MonoBehaviour
 {
     public int x, y;
     public Tablero tablero;
-    private List<Casilla> vecinas = new List<Casilla>();
+    public List<Casilla> vecinas = new List<Casilla>();
     private Dictionary<int, Casilla> vecinasxdireccion;
     private Ficha ficha;
     private bool comprobanteExistencia = false;
