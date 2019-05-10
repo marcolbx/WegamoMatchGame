@@ -15,7 +15,7 @@ public class Tablero : MonoBehaviour
     private Casilla casillaSeleccionada;
     private Casilla casillaSeleccionada2;
     public float tiempoCambio = 0.5f;
-    private bool devuelto = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -244,18 +244,8 @@ public class Tablero : MonoBehaviour
             var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
             var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
 
-            HighlightMatches();
+        //    HighlightMatches();
             yield return new WaitForSeconds(tiempoCambio + 0.5f);
-
-            /*
-            if (totalMatches.Count == 0 && totalMatches2.Count == 0)
-            {
-                if (devuelto == false)
-                {
-                    devuelto = true;
-                    StartCoroutine(CambiarCasillaRutina(casillaSeleccionada, casillaSeleccionada2));
-                }
-            }*/
 
             if (totalMatches.Count == 0 && totalMatches2.Count == 0)
             {
@@ -268,27 +258,36 @@ public class Tablero : MonoBehaviour
                 casillaSeleccionada.SetFicha(fichaSeleccionada2);
                 casillaSeleccionada2.SetFicha(fichaSeleccionada);
             }
-
-            if (totalMatches.Count > 0)
+            else
             {
-                foreach (Casilla casilla in totalMatches)
-                {
-                    EliminarPiezaCasilla(casilla);
-                }
-            }
-            if (totalMatches2.Count > 0)
-            {
-                foreach (Casilla casilla in totalMatches2)
-                {
-                    EliminarPiezaCasilla(casilla);
-                }
-            }
 
-            yield return new WaitForSeconds(tiempoCambio);
-            if (totalMatches.Count > 0)
-                HighlightDesactivar(totalMatches);
-            if (totalMatches2.Count > 0)
-                HighlightDesactivar(totalMatches2);
+                if (totalMatches.Count > 0)
+                {
+                    foreach (Casilla casilla in totalMatches)
+                    {
+                        EliminarPiezaCasilla(casilla);
+                    }
+                    
+
+                }
+                if (totalMatches2.Count > 0)
+                {
+                    foreach (Casilla casilla in totalMatches2)
+                    {
+                        EliminarPiezaCasilla(casilla);
+                    }
+                    
+                }
+
+                yield return new WaitForSeconds(tiempoCambio);
+                var combinedMatches = totalMatches.Union(totalMatches2).ToList();
+                GravedadEnColumnas(combinedMatches);
+                if (totalMatches.Count > 0)
+                    HighlightDesactivar(totalMatches);
+                if (totalMatches2.Count > 0)
+                    HighlightDesactivar(totalMatches2);
+                HighlightMatches();
+            }
         }
     }
 
@@ -540,6 +539,53 @@ public class Tablero : MonoBehaviour
     }
 
 
+    List<Casilla> GravedadEnColumnas(int columna, float tiempo = 0.1f)
+    {
+        List<Casilla> casillasEnMovimiento = new List<Casilla>();
+        for (int i = 0; i<largo - 1; i++)
+        {
+            if(casillas[columna,i].GetFicha() == null)
+            {
+                for(int j = i+1; j < largo; j++)
+                {
+                    if (casillas[columna, j].GetFicha() != null)
+                    {
+                        casillas[columna, j].GetFicha().Moverse(casillas[columna, i], tiempo);
+                        casillas[columna, i].SetFicha(casillas[columna, j].GetFicha());
+                        if (!casillasEnMovimiento.Contains(casillas[columna, i]))
+                        {
+                            casillasEnMovimiento.Add(casillas[columna, i]);
+                        }
+                        casillas[columna, j].SetFicha(null);
+                        break;
+                    }
+                }
+            }
+        }
+        return casillasEnMovimiento;
+    }
+
+    List<Casilla> GravedadEnColumnas(List<Casilla> casillas)
+    {
+        List<Casilla> casillasMovimiento = new List<Casilla>();
+        List<int> columnasAAfectar = ObtenerLasColumnas(casillas);
+        foreach(int columna in columnasAAfectar)
+        {
+            casillasMovimiento = casillasMovimiento.Union(GravedadEnColumnas(columna)).ToList();
+        }
+        return casillasMovimiento;
+    }
+
+    List<int> ObtenerLasColumnas(List<Casilla> casillas)
+    {
+        List<int> columnas = new List<int>();
+        foreach(Casilla casilla in casillas)
+        {
+            if (!columnas.Contains(casilla.x))
+                columnas.Add(casilla.x);
+        }
+        return columnas;
+    }
 
 
     //No Funcionales
