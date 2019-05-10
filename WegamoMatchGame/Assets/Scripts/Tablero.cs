@@ -236,16 +236,19 @@ public class Tablero : MonoBehaviour
             fichaSeleccionada.Moverse(casillaSeleccionada2, tiempoCambio);
             fichaSeleccionada2.Moverse(casillaSeleccionada, tiempoCambio);
             yield return new WaitForSeconds(tiempoCambio);
-
+            
             casillaSeleccionada.SetFicha(fichaSeleccionada2);
             casillaSeleccionada2.SetFicha(fichaSeleccionada);
+            HighlightMatchesCasillas(casillaSeleccionada);
+            HighlightMatchesCasillas(casillaSeleccionada2);
             Debug.Log("NUEVOS Casilla Seleccionada: " + casillaSeleccionada.name + "Ficha Seleccionada: " + casillaSeleccionada.GetFicha() + casillaSeleccionada.GetFicha().GetValor());
             Debug.Log("NUEVOS Casilla Seleccionada2: " + casillaSeleccionada2.name + "Ficha Seleccionada2: " + casillaSeleccionada2.GetFicha() + casillaSeleccionada2.GetFicha().GetValor());
             var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
             var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
 
-        //    HighlightMatches();
+           // HighlightMatches();
             yield return new WaitForSeconds(tiempoCambio + 0.5f);
+            //HighlightDesactivarTodosMatches();
 
             if (totalMatches.Count == 0 && totalMatches2.Count == 0)
             {
@@ -286,7 +289,7 @@ public class Tablero : MonoBehaviour
                     HighlightDesactivar(totalMatches);
                 if (totalMatches2.Count > 0)
                     HighlightDesactivar(totalMatches2);
-                HighlightMatches();
+              //  HighlightMatches();
             }
         }
     }
@@ -472,7 +475,6 @@ public class Tablero : MonoBehaviour
                 DesanimarCasilla(casillas[i, j]);
                 var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[i, j]);
 
-                //Debug.Log("Entrando al if de vertMatches.Size()");
                 if (totalMatches.Count > 0)
                 {
                     foreach (Casilla casilla in totalMatches)
@@ -481,6 +483,32 @@ public class Tablero : MonoBehaviour
                         AnimarCasilla(casilla);
                     }
                 }
+            }
+        }
+    }
+
+    void HighlightMatchesCasillas(Casilla casilla)
+    {
+        var matches = EncontrarTodosLosMatchesSinDiagonales(casilla);
+        if(matches.Count > 0)
+        {
+            foreach (Casilla casilla2 in matches)
+            {
+                HighlightCasilla(casilla2);
+                AnimarCasilla(casilla2);
+            }
+        }
+    }
+
+    void HighlightDesactivarTodosMatches()
+    {
+        for (int i = 0; i < ancho; i++)
+        {
+            for (int j = 0; j < largo; j++)
+            {
+                SpriteRenderer spriteRenderer = casillas[i, j].GetComponent<SpriteRenderer>();
+                spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+                DesanimarCasilla(casillas[i, j]);
             }
         }
     }
