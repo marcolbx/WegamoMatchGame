@@ -151,6 +151,13 @@ public class Tablero : MonoBehaviour
    // Debug.Log(casilla.name + "Tiene la ficha: " + casilla.GetFicha().name);
     }
 
+    public void InicializarRotacion(Ficha ficha)
+    {
+        //ficha.transform.rotation = Quaternion.identity; // Si se quiere que esten en rotacion (0,0,0);
+        Quaternion target = Quaternion.Euler(-110, 0, 0); //Se ve bonito con -110
+        ficha.transform.rotation = target;
+    }
+
     /**
      * LlenarRandom() llenara las casillas con fichas aleatorias.
      */
@@ -289,9 +296,12 @@ public class Tablero : MonoBehaviour
                     HighlightDesactivar(totalMatches);
                 if (totalMatches2.Count > 0)
                     HighlightDesactivar(totalMatches2);
-              //  HighlightMatches();
+                //  HighlightMatches();
+                yield return new WaitForSeconds(tiempoCambio);
+                
             }
         }
+        RefillBoard();
     }
 
     public void AnimarCasilla(Casilla casilla)
@@ -452,7 +462,7 @@ public class Tablero : MonoBehaviour
     void HighlightCasilla(Casilla casilla)
     {
         SpriteRenderer spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
-        spriteRenderer.color = new Color(0, 0, 0, 1);
+        spriteRenderer.color = new Color(1, 1, 1, 0.5f);
     }
 
     void HighlightDesactivar(List<Casilla> casillas)
@@ -541,7 +551,6 @@ public class Tablero : MonoBehaviour
             }
         }
     }
-
     /*
      * Vecinas devuelve true si en efecto son vecinas. Usando las posiciones de las casillas. Forma 1 de hacerlo.
      */
@@ -615,6 +624,59 @@ public class Tablero : MonoBehaviour
         return columnas;
     }
 
+
+    void RefillBoard()
+    {
+        StartCoroutine(RefillRutina());
+    }
+
+    IEnumerator RefillRutina()
+    {
+        List<GameObject> fichas = new List<GameObject>();
+        List<Casilla> casillas = new List<Casilla>();
+        fichas = GenerarFichasFaltantes();
+        casillas = CasillasFaltantes();
+        yield return new WaitForSeconds(tiempoCambio);
+        int i = casillas.Count;
+        foreach (GameObject ficha in fichas)
+        {
+            ficha.GetComponent<Ficha>().Moverse(casillas[i - 1], 0.45f);
+            yield return new WaitForSeconds(0.45f);
+            ColocarFicha(ficha.GetComponent<Ficha>(), casillas[i - 1]);
+            i--;
+        }
+    }
+
+    List<GameObject> GenerarFichasFaltantes()
+    {
+        List<GameObject> fichas = new List<GameObject>();
+        
+        foreach (Casilla casilla in casillas)
+        {
+            if (casilla.GetFicha() == null)
+            {
+                Vector3 position = new Vector3(casilla.x,largo + casilla.y - 1,0);
+                GameObject fichaRandom = Instantiate(ObtenerFichaRandom(), position, Quaternion.identity) as GameObject;
+                InicializarRotacion(fichaRandom.GetComponent<Ficha>());
+                fichas.Add(fichaRandom);
+            }
+        }
+        return fichas;
+    }
+
+    List<Casilla> CasillasFaltantes()
+    {
+        List<Casilla> casillas = new List<Casilla>();
+
+        foreach (Casilla casilla in this.casillas)
+        {
+            if (casilla.GetFicha() == null)
+            {
+                casillas.Add(casilla);
+            }
+        }
+        return casillas;
+    }
 
     //No Funcionales
 
