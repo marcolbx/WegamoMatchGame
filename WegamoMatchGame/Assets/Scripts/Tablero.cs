@@ -15,17 +15,26 @@ public class Tablero : MonoBehaviour
     private Casilla casillaSeleccionada;
     private Casilla casillaSeleccionada2;
     public float tiempoCambio = 0.5f;
+    public bool puedeJugar = true;
+    AudioSource audioSource;
+    AudioClip clip;
+    AudioClip clipGeneracionFicha;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         casillas = new Casilla[ancho, largo];
+        puedeJugar = true;
         CreacionCasillas();
         ArreglarCamera();
         InicializarVecinas();
         LlenarRandom();
-       // HighlightMatches();
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = Resources.Load("DM-CGS-15") as AudioClip;
+        
+        // HighlightMatches();
     }
 
     // Update is called once per frame
@@ -183,7 +192,7 @@ public class Tablero : MonoBehaviour
      */
     public void SeleccionarCasilla(Casilla casilla)
     {
-        if(casillaSeleccionada == null)
+        if(casillaSeleccionada == null && puedeJugar==true)
         {
             casillaSeleccionada = casilla;
             Debug.Log("Casilla Seleccionada: " + casillaSeleccionada.name + "Ficha Seleccionada: " + casillaSeleccionada.GetFicha() + casillaSeleccionada.GetFicha().GetValor());
@@ -211,6 +220,7 @@ public class Tablero : MonoBehaviour
         if(casillaSeleccionada != null && casillaSeleccionada2 != null)
         {
                 Debug.Log("Casilla Seleccionada2: " + casillaSeleccionada2.name + "Ficha Seleccionada: " + casillaSeleccionada2.GetFicha() + casillaSeleccionada2.GetFicha().GetValor());
+                puedeJugar = false;
                 if (Vecinas2(casillaSeleccionada, casillaSeleccionada2)) 
                 CambiarCasilla(casillaSeleccionada,casillaSeleccionada2);
         }
@@ -252,7 +262,11 @@ public class Tablero : MonoBehaviour
             Debug.Log("NUEVOS Casilla Seleccionada2: " + casillaSeleccionada2.name + "Ficha Seleccionada2: " + casillaSeleccionada2.GetFicha() + casillaSeleccionada2.GetFicha().GetValor());
             var totalMatches = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada.x, casillaSeleccionada.y]);
             var totalMatches2 = EncontrarTodosLosMatchesSinDiagonales(casillas[casillaSeleccionada2.x, casillaSeleccionada2.y]);
-
+            if (totalMatches.Count > 0 || totalMatches2.Count>0)
+            {
+                audioSource.clip = Resources.Load("DM-CGS-15") as AudioClip;
+                audioSource.Play();
+            }
            // HighlightMatches();
             yield return new WaitForSeconds(tiempoCambio + 0.5f);
             //HighlightDesactivarTodosMatches();
@@ -270,7 +284,6 @@ public class Tablero : MonoBehaviour
             }
             else
             {
-
                 if (totalMatches.Count > 0)
                 {
                     foreach (Casilla casilla in totalMatches)
@@ -302,6 +315,7 @@ public class Tablero : MonoBehaviour
             }
         }
         RefillBoard();
+        
     }
 
     public void AnimarCasilla(Casilla casilla)
@@ -380,8 +394,8 @@ public class Tablero : MonoBehaviour
         }
         if (matches.Count >= minimo)
         {
-         //   Debug.Log("Entromatch.Size()>= minimo (METODO) EncontrarMatches. Devolviendo un match mayor de 2");
-         //   Debug.Log("EntroMatch.Size()= " + matches.Count);
+            //   Debug.Log("Entromatch.Size()>= minimo (METODO) EncontrarMatches. Devolviendo un match mayor de 2");
+            //   Debug.Log("EntroMatch.Size()= " + matches.Count);
             return matches;
         }
         return null;
@@ -640,11 +654,14 @@ public class Tablero : MonoBehaviour
         int i = casillas.Count;
         foreach (GameObject ficha in fichas)
         {
-            ficha.GetComponent<Ficha>().Moverse(casillas[i - 1], 0.45f);
-            yield return new WaitForSeconds(0.45f);
+            ficha.GetComponent<Ficha>().Moverse(casillas[i - 1], 0.35f);
+            audioSource.clip = Resources.Load("DM-CGS-32") as AudioClip;
+            audioSource.Play();
+            yield return new WaitForSeconds(0.35f);
             ColocarFicha(ficha.GetComponent<Ficha>(), casillas[i - 1]);
             i--;
         }
+        puedeJugar = true;
     }
 
     List<GameObject> GenerarFichasFaltantes()

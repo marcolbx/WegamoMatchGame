@@ -32,6 +32,7 @@ public class FactoryTablero : MonoBehaviour
         tablero.GetComponent<Tablero>().largo = y; //Metodo 2
 
 
+
      //   tablero = new Tablero(x,y,P_CasillaStandard); //Metodo 1
      //   tablero.fichasPrefabs = this.fichasPrefabs; //Metodo 1
      //   tablero.LlenarRandom(); //Metodo 1

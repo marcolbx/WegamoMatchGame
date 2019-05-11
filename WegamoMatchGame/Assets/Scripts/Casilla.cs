@@ -96,4 +96,18 @@ public abstract class Casilla : MonoBehaviour
             tablero.AlSoltarCasilla();
         }
     }
+
+
+
+    public static bool TouchRelease()
+    {
+        bool b = false;
+        for (int i = 0; i < Input.touches.Length; i++)
+        {
+            b = Input.touches[i].phase == TouchPhase.Ended;
+            if (b)
+                break;
+        }
+        return b;
+    }
 }
