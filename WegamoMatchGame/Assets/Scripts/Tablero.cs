@@ -309,7 +309,7 @@ public class Tablero : MonoBehaviour
                     HighlightDesactivar(totalMatches);
                 if (totalMatches2.Count > 0)
                     HighlightDesactivar(totalMatches2);
-                //  HighlightMatches();
+                 HighlightMatches();
                 yield return new WaitForSeconds(tiempoCambio);
                 
             }
@@ -322,7 +322,7 @@ public class Tablero : MonoBehaviour
     {
         Ficha ficha = casilla.GetFicha();
         AnimationScript animationS = ficha.gameObject.GetComponent<AnimationScript>();
-        animationS.rotationSpeed = 60f;
+            animationS.rotationSpeed = 90f;
     }
     public void AnimarCasillaMinimizarFicha(List<Casilla> casillas)
     {
@@ -654,10 +654,10 @@ public class Tablero : MonoBehaviour
         int i = casillas.Count;
         foreach (GameObject ficha in fichas)
         {
-            ficha.GetComponent<Ficha>().Moverse(casillas[i - 1], 0.35f);
+            ficha.GetComponent<Ficha>().Moverse(casillas[i - 1], 0.31f);
             audioSource.clip = Resources.Load("DM-CGS-32") as AudioClip;
             audioSource.Play();
-            yield return new WaitForSeconds(0.35f);
+            yield return new WaitForSeconds(0.31f);
             ColocarFicha(ficha.GetComponent<Ficha>(), casillas[i - 1]);
             i--;
         }
