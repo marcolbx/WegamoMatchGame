@@ -5,11 +5,8 @@ using UnityEngine;
 public class FactoryTablero : MonoBehaviour
 {
     public int ancho, largo;
-    //public Tablero tablero;
-    //GameObject tablero;
     public GameObject Tablero;
-    public GameObject P_CasillaStandard;
-    public GameObject[] fichasPrefabs;
+    public ParticleSystem particleSystem;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +27,7 @@ public class FactoryTablero : MonoBehaviour
         tablero.name = "Tablero";
         tablero.GetComponent<Tablero>().ancho = x; //Metodo 2
         tablero.GetComponent<Tablero>().largo = y; //Metodo 2
+        tablero.GetComponent<Tablero>().particleSystem = this.particleSystem;
 
 
 

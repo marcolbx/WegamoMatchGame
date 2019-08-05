@@ -7,34 +7,35 @@ public class Tablero : MonoBehaviour
 {
     public int ancho, largo;  //Define las dimensiones del tablero. x,y
     private int tamanoBorde = 2; //Permite alejar el tablero de la camara. Funciona como un padding
-    public GameObject P_CasillaStandard; //Casillas a instanciar
+    public GameObject P_CasillaStandard; //Casillas a instanciar es un Prefab ( P ).
     public GameObject[] fichasPrefabs; //Fichas a instanciar
-    public int minimoParaMatch = 3;
+    public int minimoParaMatch = 3; //El minimo numero para generar un match
     Casilla[,] casillas; //Tiene toda la lista de las casillas
 
     private Casilla casillaSeleccionada;
     private Casilla casillaSeleccionada2;
     public float tiempoCambio = 0.5f;
-    public bool puedeJugar = true;
+    public bool puedeJugar = true; //Bool que permite saber si el usuario puede jugar
     AudioSource audioSource;
-    AudioClip clip;
-    AudioClip clipGeneracionFicha;
+
+    public ParticleSystem particleSystem;
 
 
 
     // Start is called before the first frame update
+    //En este caso permite la inicializacion de las variables.
     void Start()
     {
-        casillas = new Casilla[ancho, largo];
-        puedeJugar = true;
-        CreacionCasillas();
+        casillas = new Casilla[ancho, largo]; // n x n casillas a crear para este tablero
+        puedeJugar = true; 
+        CreacionCasillas(); 
         ArreglarCamera();
         InicializarVecinas();
         LlenarRandom();
         audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.clip = Resources.Load("DM-CGS-15") as AudioClip;
+        audioSource.clip = Resources.Load("DM-CGS-15") as AudioClip; // Sonido de Match, El nombre es DM-CGS-15, esta en la carpeta Resources.
         
-        // HighlightMatches();
+        // HighlightMatches(); Si este metodo se habilita, se mostraran todos los matches que hayan en el tablero
     }
 
     // Update is called once per frame
@@ -42,18 +43,7 @@ public class Tablero : MonoBehaviour
     {
         
     }
-
-    public Tablero(int ancho, int largo, GameObject P_CasillaStandard)
-    {
-       // Debug.Log("ancho:" + ancho + " largo: " + largo);
-        this.ancho = ancho;
-        this.largo = largo;
-        this.casillas = new Casilla[ancho, largo];
-        this.P_CasillaStandard = P_CasillaStandard;
-       // Debug.Log("Entrando a creacionCasillas()");
-        CreacionCasillas();
-    }
-
+    
     /**
      * CreacionCasillas() permite crear la cantidad de casillas mediante el ancho y largo introducido.
      */
@@ -70,7 +60,7 @@ public class Tablero : MonoBehaviour
                     casilla.GetComponent<CasillaStandard>().SetCoordenadas(i, j);
                     casilla.GetComponent<Casilla>().tablero = this;
                     casillas[i, j] = casilla.GetComponent<CasillaStandard>();
-                    casilla.transform.parent = transform;
+                    casilla.transform.parent = transform; //El transform padre sera el del tablero, de esta manera si el tablero se mueve, las fichas se mueven con el.
                 }
             }
         }
@@ -120,6 +110,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+/**
+     * ArreglarCamera() Permite fijar la camara en el centro del tablero
+     */
     void ArreglarCamera()
     {
        // Debug.Log("Entro en ArreglarCamera");
@@ -309,7 +302,7 @@ public class Tablero : MonoBehaviour
                     HighlightDesactivar(totalMatches);
                 if (totalMatches2.Count > 0)
                     HighlightDesactivar(totalMatches2);
-                 HighlightMatches();
+               //  HighlightMatches();   // Si esto se desactiva no existira la ayuda para resaltar los que se pueden hacer.
                 yield return new WaitForSeconds(tiempoCambio);
                 
             }
@@ -318,12 +311,17 @@ public class Tablero : MonoBehaviour
         
     }
 
+    /**
+     * AnimarCasilla() Permite activar el script de animacion e inicializarlo con una velocidad.
+     */
     public void AnimarCasilla(Casilla casilla)
     {
         Ficha ficha = casilla.GetFicha();
         AnimationScript animationS = ficha.gameObject.GetComponent<AnimationScript>();
             animationS.rotationSpeed = 90f;
     }
+
+    //No se llevo a cabo, la idea era cambiar la ficha de tamano
     public void AnimarCasillaMinimizarFicha(List<Casilla> casillas)
     {
         foreach (Casilla casilla in casillas)
@@ -333,6 +331,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+    /**
+     * DesanimarCasilla() Permite reducir la animacion a la velocidad estandard.
+     */
     public void DesanimarCasilla(Casilla casilla)
     {
         Ficha ficha = casilla.GetFicha();
@@ -343,6 +344,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+    /**
+     * DentroDeLimites(int x, int y) permite saber si las fichas y casillas estan dentro del limite del tablero
+     */
     bool DentroDeLimites(int x, int y)
     {
         return (x >= 0 && x < ancho && y >= 0 && y < largo);
@@ -473,12 +477,18 @@ public class Tablero : MonoBehaviour
         return combinedMatches;
     }
 
+    /*
+    *   HighlightCasilla(Casilla casilla) hara visible el sprite de la casilla.
+    */
     void HighlightCasilla(Casilla casilla)
     {
         SpriteRenderer spriteRenderer = casillas[casilla.x, casilla.y].GetComponent<SpriteRenderer>();
         spriteRenderer.color = new Color(1, 1, 1, 0.5f);
     }
 
+/*
+    HighlightDesactivar(List<Casilla> casillas) vuelve invisible el sprite de la casilla
+ */
     void HighlightDesactivar(List<Casilla> casillas)
     {
         foreach (Casilla casilla in casillas)
@@ -488,6 +498,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+/*
+    HighlightMatches() muestra todos los matches del tablero.
+ */
     void HighlightMatches()
     {
         for (int i = 0; i < ancho; i++)
@@ -511,6 +524,9 @@ public class Tablero : MonoBehaviour
         }
     }
 
+/*
+    HighlightMatchesCasillas(Casilla casilla) muestra los matches que hayan en las casillas.
+ */
     void HighlightMatchesCasillas(Casilla casilla)
     {
         var matches = EncontrarTodosLosMatchesSinDiagonales(casilla);
@@ -524,6 +540,7 @@ public class Tablero : MonoBehaviour
         }
     }
 
+//No se uso, la idea era desactivar el highlight de todos los matches, pero ya se tiene ese metodo arriba.
     void HighlightDesactivarTodosMatches()
     {
         for (int i = 0; i < ancho; i++)
@@ -627,6 +644,9 @@ public class Tablero : MonoBehaviour
         return casillasMovimiento;
     }
 
+    /*
+        ObtenerLasColumnas(List<Casilla> casillas) devuelve los numeros de las columnas que estan siendo afectadas.
+     */
     List<int> ObtenerLasColumnas(List<Casilla> casillas)
     {
         List<int> columnas = new List<int>();

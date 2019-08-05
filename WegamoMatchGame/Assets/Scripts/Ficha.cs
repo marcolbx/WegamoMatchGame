@@ -5,13 +5,9 @@ using UnityEngine;
 public abstract class Ficha : MonoBehaviour
 {
     public enum FichaValor {DIAMANTE,ESTRELLA,ROMBO,CORAZON,ESPIRAL}; //Define los valores posibles que puede tener una ficha
-    public GameObject[] gameObjects;  //Se colocan los objetos que pertencen a cada uno. (Esto para el momento de renderizar el tipo de ficha)
     public FichaValor valor;         //El valor de la ficha
     public bool moviendo = false;          //Condicion que dice si la ficha se esta moviendo.
     public int x, y;
-   // public Tablero tablero; //Momentaneamente
-                            
-    public FichaValor fichaValor;
 
     /**
     * interpolation permite el movimiento visual de las fichas.

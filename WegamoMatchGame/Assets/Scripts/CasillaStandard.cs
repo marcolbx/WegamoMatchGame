@@ -15,15 +15,17 @@ public class CasillaStandard : Casilla
         
     }
 
-    void OnMouseDown()
+    public override void OnMouseDown()
     {
         if(tablero != null)
         {
             tablero.SeleccionarCasilla(this);
+            tablero.particleSystem.Play();
+            tablero.particleSystem.transform.position = this.transform.position;
         }
     }
 
-    void OnMouseEnter()
+    public override void OnMouseEnter()
     {
         if(tablero != null)
         {
@@ -31,7 +33,7 @@ public class CasillaStandard : Casilla
         }
     }
 
-    void OnMouseUp()
+    public override void OnMouseUp()
     {
         if(tablero != null)
         {
@@ -39,7 +41,7 @@ public class CasillaStandard : Casilla
             Ficha ficha2 = this.GetFicha();
             AnimationScript animationS = ficha2.gameObject.GetComponent<AnimationScript>();
             animationS.rotationSpeed = 10f;
-
+            tablero.particleSystem.Stop();
             tablero.AlSoltarCasilla();
         }
     }

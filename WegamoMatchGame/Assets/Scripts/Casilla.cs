@@ -10,7 +10,7 @@ public abstract class Casilla : MonoBehaviour
     private Dictionary<int, Casilla> vecinasxdireccion;
     private Ficha ficha;
     private bool comprobanteExistencia = false;
-    private Match match;
+    //private Match match;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +74,7 @@ public abstract class Casilla : MonoBehaviour
         if(tablero != null)
         {
             tablero.SeleccionarCasilla(this);
+            tablero.particleSystem.Play();
         }
     }
 
@@ -82,6 +83,7 @@ public abstract class Casilla : MonoBehaviour
         if(tablero != null)
         {
             tablero.ArrastradaCasilla(this);
+            
         }
     }
 
@@ -98,7 +100,7 @@ public abstract class Casilla : MonoBehaviour
     }
 
 
-
+//Mobile, no funcional
     public static bool TouchRelease()
     {
         bool b = false;
