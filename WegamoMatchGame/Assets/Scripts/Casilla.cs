@@ -24,10 +24,7 @@ public abstract class Casilla : MonoBehaviour
         
     }
 
-    public virtual bool HasMatch(Matcher matcher)
-    {
-        return matcher.HasMatch(this);
-    }
+ 
 
     public virtual Casilla GetCasilla(int direccion)
     {

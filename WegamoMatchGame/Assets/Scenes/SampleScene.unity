@@ -120,6 +120,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &171555997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 171555998}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &171555998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171555997}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.02, y: -1.76, z: -0.19696146}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &392361712
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,17 +179,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ea5d8f8dc918eb46a24d39c22744784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ancho: 7
-  largo: 7
+  ancho: 10
+  largo: 10
   Tablero: {fileID: 984973170287217250, guid: cc0254be7035dba4289cea36953edbbb, type: 3}
-  P_CasillaStandard: {fileID: 6522521396705593678, guid: e3ec36e3fc731164d9fe7e3b3cc8e225,
-    type: 3}
-  fichasPrefabs:
-  - {fileID: 1976934220304431624, guid: 254bf1d5ae0768a408e465f7964ea7ce, type: 3}
-  - {fileID: 3641094884647853398, guid: 98c37c09b9cd6e04fbdd075656c7a24f, type: 3}
-  - {fileID: 8633430276705033114, guid: 32f1e4bab5478a042ab0f35ed5ce0a89, type: 3}
-  - {fileID: 6256340688831196995, guid: 92b02922bab44c5408272086f9b3f624, type: 3}
-  - {fileID: 6088530796221546042, guid: 507ebe7f7896fef4caeb9e4761164cd2, type: 3}
   particleSystem: {fileID: 963019654}
 --- !u!4 &392361714
 Transform:
