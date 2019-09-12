@@ -78,7 +78,6 @@ public abstract class Ficha : MonoBehaviour
                     float rotY = this.transform.eulerAngles.y;
                     float rotZ = this.transform.eulerAngles.z;
 
-                 //   tablero.ColocarFicha(this, casilla);
                     this.transform.eulerAngles = new Vector3(rotX, rotY, rotZ);
                 break;
             }

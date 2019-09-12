@@ -10,12 +10,12 @@ public abstract class Casilla : MonoBehaviour
     private Dictionary<int, Casilla> vecinasxdireccion;
     private Ficha ficha;
     private bool comprobanteExistencia = false;
-    //private Match match;
+
 
     // Start is called before the first frame update
     void Start()
     {
-       // Casilla temp = new Casilla();
+
     }
 
     // Update is called once per frame
@@ -88,10 +88,6 @@ public abstract class Casilla : MonoBehaviour
     {
         if(tablero != null)
         {
-            //Parar animacion una vez soltado el click
-           // ficha = this.GetFicha();
-           // AnimationScript animationS = ficha.gameObject.GetComponent<AnimationScript>();
-           // animationS.rotationSpeed = 10f;
             tablero.AlSoltarCasilla();
         }
     }
